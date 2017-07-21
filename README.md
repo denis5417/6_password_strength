@@ -81,4 +81,4 @@ $ python3 password_strength.py dskjhfkjdshjkhjhjkhhhJHJKDHKJHDJKhkjhjdh#%^
 
 # Цели проект
 
-Это код написано в образовательных целях. Тренировачный курс для веб-девелоперов - [DEVMAN.org](https://devman.org)
+Это код написан в образовательных целях. Тренировачный курс для веб-девелоперов - [DEVMAN.org](https://devman.org)
