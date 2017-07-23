@@ -1,71 +1,84 @@
 import sys
 import string
+import os
+
+MAX_POINT = 2
+MID_POINT = 1
+MIN_POINT = 0
 
 
-def check_black_list(password):
-    black_list = open("10k_most_common.txt").read().split("\n")
+def check_black_list(black_list):
     if password in black_list:
-        print("Ваш пароль в черном списке")
-        print("Ваша оценка 0 из 10")
-        sys.exit()
+        return None
     for bad_pass in black_list:
         if bad_pass in password:
-            print("Пароль {} из черного списка является подстрокой вашего пароля 1 балл".format(bad_pass))
-            return 1
+            return MID_POINT
         if password in bad_pass:
-            print("Пароль является построкой пароля {} из черного списка. 1 балл".format(bad_pass))
-            return 1
-    print("Пароля нет в черном списке. 2 балла")
-    return 2
+            return MemoryError
+    return MAX_POINT
 
 
 def check_case(password):
     if password.upper() != password and password.lower()!= password:
-        print("В пароле используются заглавные и строчные буквы одновременно. 2 балла")
-        return 2
+        return MAX_POINT
     else:
-        print("В пароле не используются заглавные и строчные буквы одновременно. 0 баллов")
-        return 0
+        return MIN_POINT
 
 
 def check_special_characters(password):
     for char in string.punctuation:
         if char in password:
-            print("В пароле используются специальные символы. 2 балла")
-            return 2
-    print("В пароле не используются специальные символы. 0 балов")
-    return 0
+            return MAX_POINT
+    return MIN_POINT
 
 
 def check_len(password):
-    if len(password) < 12:
-        print("В пароле меньше 12 символов. 0 баллов")
-        return 0
-    elif 12 <= len(password) <= 14:
-        print("В пароле от 12 до 14 символов. 1 балл")
-        return 1
+    min_len = 12
+    good_len = 14
+    if len(password) < min_len:
+        return MIN_POINT
+    elif min_len <= len(password) <= good_len:
+        return MID_POINT
     else:
-        print("В пароле больше 14 символов. 2 балла")
-        return 2
+        return MAX_POINT
 
 
 def check_dates(password):
-    for year in range(1900, 2100):
+    min_restricted_num = 1900
+    max_restricted_num = 2000
+    for year in range(min_restricted_num, max_restricted_num):
         if str(year) in password:
-            print("В пароле есть дата. 0 баллов")
-            return 0
-    print("В пароле нет даты. 2 балла")
-    return 2
+            return MIN_POINT
+    return MAX_POINT
+
+
+def load_black_list(filepath):
+    with open(filepath) as black_list_file:
+        black_list = black_list_file.read().strip().split()
+    return black_list
+
+
+def check_filepath(filepath):
+    return os.path.exists(filepath)
+
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 2:
         password = sys.argv[1]
-        points = 0
-        points += check_black_list(password)
-        points += check_case(password)
-        points += check_special_characters(password)
-        points += check_len(password)
-        points += check_dates(password)
-        print("Ваша оценка – {} из 10".format(points))
+        filepath = sys.argv[2]
+        if not check_filepath(filepath):
+            print("Файл не существует")
+        else:
+            points = 0
+            check_black_list = check_black_list(load_black_list(filepath))
+            if not check_black_list:
+                print("Ваша оценка 0 из 10")
+            else:
+                points += check_black_list
+                points += check_case(password)
+                points += check_special_characters(password)
+                points += check_len(password)
+                points += check_dates(password)
+                print("Ваша оценка – {} из 10".format(points))
     else:
         print("Вы не ввели пароль")
