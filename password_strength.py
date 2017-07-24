@@ -1,13 +1,14 @@
-import sys
 import string
 import os
+import argparse
+
 
 MAX_POINT = 2
 MID_POINT = 1
 MIN_POINT = 0
 
 
-def check_black_list(black_list):
+def check_black_list(black_list, password):
     if password in black_list:
         return None
     for bad_pass in black_list:
@@ -58,27 +59,37 @@ def load_black_list(filepath):
     return black_list
 
 
-def check_filepath(filepath):
-    return os.path.exists(filepath)
+def check_filepath(filepath1, filepath2):
+    return os.path.exists(filepath1) and os.path.exists(filepath2)
+
+
+def arg_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("passfilepath", type=str, help="Path to file with password")
+    parser.add_argument("dictfilepath", type=str, help="Path to file with common passwords")
+    return parser.parse_args()
+
+
+def load_password(filepath):
+    with open(filepath) as password_file:
+        password = password_file.read().strip()
+    return password
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 2:
-        password = sys.argv[1]
-        filepath = sys.argv[2]
-        if not check_filepath(filepath):
-            print("Файл не существует")
-        else:
-            points = 0
-            check_black_list = check_black_list(load_black_list(filepath))
-            if not check_black_list:
-                print("Ваша оценка 0 из 10")
-            else:
-                points += check_black_list
-                points += check_case(password)
-                points += check_special_characters(password)
-                points += check_len(password)
-                points += check_dates(password)
-                print("Ваша оценка – {} из 10".format(points))
+    args = arg_parser()
+    if not check_filepath(args.passfilepath, args.dictfilepath):
+        print("Проверьте имены файлов")
     else:
-        print("Вы не ввели пароль")
+        points = 0
+        password = load_password(args.passfilepath)
+        check_black_list = check_black_list(load_black_list(args.dictfilepath), password)
+        if not check_black_list:
+            print("Ваша оценка 0 из 10")
+        else:
+            points += check_black_list
+            points += check_case(password)
+            points += check_special_characters(password)
+            points += check_len(password)
+            points += check_dates(password)
+            print("Ваша оценка – {} из 10".format(points))
