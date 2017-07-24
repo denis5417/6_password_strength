@@ -1,6 +1,6 @@
 # Вычислитель сложности пароля
 
-Принимает на вход пароль путь к словарю с часто используемымы паролями и выводит оценку от 1 до 10, где 1 – очень слабый пароль и 10 – сильный.
+Принимает на вход путь к файлу с паролем и путь к словарю с часто используемымы паролями и выводит оценку от 1 до 10, где 1 – очень слабый пароль и 10 – сильный.
 
 # Критерии оценивания
 
@@ -21,16 +21,31 @@
 Запуск на Linux:
 
 ```#!bash
-$ python3 password_strength.py <password> <path_to_file_with_dict>
+$ python3 password_strength.py <path_to_file_with_password> <path_to_file_with_dict>
 ```
 Запуск на Windows происходит аналогично.
 
 Примеры работы:
 
 ```#!bash
-$ python3 password_strength.py jsdhjfhdsjhgHGDHGDH87827* 10k_most_common.txt
+$ python3 password_strength.py password.txt common_passwords.txt
 Ваша оценка – 10 из 10
 ```
+Пример [файла с паролем](https://pastebin.com/raw/aryPNpzf)
+
+Справка:
+```#!bash
+python3 password_strength.py -h
+usage: password_strength.py [-h] passfilepath dictfilepath
+
+positional arguments:
+  passfilepath  Path to file with password
+  dictfilepath  Path to file with common password
+
+optional arguments:
+  -h, --help    show this help message and exit
+```
+
 Рекомендуется использовать [этот словарь](https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/10k_most_common.txt).
 
 # Цели проекта
